@@ -3,13 +3,15 @@ import path from 'path';
 import fs from 'fs';
 import config from '../config';
 
+const DatabaseClass = Database as unknown as { new (filename: string): Database.Database };
+
 // 确保数据目录存在
 const dbDir = path.dirname(config.database.path);
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-const db = new Database(config.database.path);
+const db = new DatabaseClass(config.database.path);
 
 // 启用外键约束
 db.pragma('foreign_keys = ON');

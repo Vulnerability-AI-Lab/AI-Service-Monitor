@@ -24,25 +24,25 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 install_nodejs() {
     if command -v node &> /dev/null; then
         NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
-        if [ "$NODE_VERSION" -ge 18 ]; then
+        if [ "$NODE_VERSION" -ge 20 ]; then
             echo "[信息] Node.js $(node -v) 已安装"
             return 0
         fi
     fi
 
-    echo "[信息] 安装Node.js 18..."
+    echo "[信息] 安装Node.js 20..."
 
     # 检测系统类型
     if [ -f /etc/debian_version ]; then
         # Debian/Ubuntu
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
         apt-get install -y nodejs
     elif [ -f /etc/redhat-release ]; then
         # CentOS/RHEL
-        curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
         yum install -y nodejs
     else
-        echo "[错误] 不支持的Linux发行版，请手动安装Node.js 18+"
+        echo "[错误] 不支持的Linux发行版，请手动安装Node.js 20+"
         exit 1
     fi
 
