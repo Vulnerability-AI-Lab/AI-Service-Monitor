@@ -242,12 +242,15 @@ class MonitorService extends EventEmitter {
             `cat /proc/net/dev | grep -E 'eth0|ens|enp' | head -1 | awk '{print $2,$10}'`
           ];
 
-          // 将所有命令合并，每个命令后输出分隔符
-          const combinedCommand = commands.map(cmd => `(${cmd}); echo "${delimiter}"`).join(' ');
+          // 将所有命令合并，每个命令后输出分隔符，用分号连接
+          const combinedCommand = commands.map(cmd => `(${cmd}); echo "${delimiter}"`).join('; ');
 
           // 只执行一次 exec
+          console.log(`[SSH] Executing command on ${server.ip}...`);
           const output = await this.execCommand(client, combinedCommand);
+          console.log(`[SSH] Command output length for ${server.ip}: ${output.length}`);
           const outputs = output.split(delimiter).map(s => s.trim());
+          console.log(`[SSH] Parsed ${outputs.length} sections for ${server.ip}`);
 
           // 辅助函数：安全获取数组元素
           const safeGet = (arr: string[], index: number): string => arr[index] || '';
@@ -340,15 +343,29 @@ class MonitorService extends EventEmitter {
 
       client.on('error', (err) => {
         clearTimeout(timeout);
-        console.error(`SSH error for ${server.ip}:`, err.message, err.level);
+        console.error(`SSH error for ${server.ip}:`, err.message, 'level:', err.level, 'description:', (err as any).description);
         reject(err);
+      });
+
+      client.on('close', () => {
+        console.log(`SSH connection closed for ${server.ip}`);
+      });
+
+      client.on('keyboard-interactive', (name, instructions, lang, prompts, finish) => {
+        // 处理键盘交互认证
+        console.log(`SSH keyboard-interactive for ${server.ip}`);
+        finish([decrypt(server.ssh_credential)]);
       });
 
       const connectConfig: any = {
         host: server.ip,
         port: server.ssh_port,
         username: server.ssh_user,
-        readyTimeout: 10000
+        readyTimeout: 15000,
+        keepaliveInterval: 10000,
+        keepaliveCountMax: 3,
+        // 尝试多种认证方式
+        tryKeyboard: true
       };
 
       try {
@@ -368,13 +385,33 @@ class MonitorService extends EventEmitter {
 
   private execCommand(client: Client, cmd: string): Promise<string> {
     return new Promise((resolve, reject) => {
+      const execTimeout = setTimeout(() => {
+        reject(new Error('Command execution timeout'));
+      }, 30000);
+
       client.exec(cmd, (err, stream) => {
-        if (err) return reject(err);
+        if (err) {
+          clearTimeout(execTimeout);
+          console.error('[SSH] exec error:', err.message);
+          return reject(err);
+        }
 
         let output = '';
+        let stderr = '';
         stream.on('data', (data: Buffer) => output += data.toString());
-        stream.stderr.on('data', () => { }); // 忽略错误输出
-        stream.on('close', () => resolve(output));
+        stream.stderr.on('data', (data: Buffer) => stderr += data.toString());
+        stream.on('close', (code: number) => {
+          clearTimeout(execTimeout);
+          if (stderr) {
+            console.log('[SSH] stderr:', stderr.substring(0, 200));
+          }
+          resolve(output);
+        });
+        stream.on('error', (err: Error) => {
+          clearTimeout(execTimeout);
+          console.error('[SSH] stream error:', err.message);
+          reject(err);
+        });
       });
     });
   }
