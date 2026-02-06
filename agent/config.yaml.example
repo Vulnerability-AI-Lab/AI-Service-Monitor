@@ -1,0 +1,25 @@
+# Linux Server Monitor Agent 配置文件
+
+# 监控服务器地址（修改为实际的Windows工作站IP）
+server_url: "http://192.168.1.10:8000"
+
+# Agent唯一标识（留空则自动生成）
+agent_id: ""
+
+# 数据采集间隔（秒）
+collect_interval: 5
+
+# API密钥（可选，用于认证）
+api_key: ""
+
+# 日志级别 (DEBUG, INFO, WARNING, ERROR)
+log_level: "INFO"
+
+# 是否启用GPU监控
+enable_gpu: true
+
+# 采集的磁盘挂载点（留空则采集所有）
+disk_mounts: []
+
+# 网络接口名称（留空则自动检测）
+network_interface: ""

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 8 npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vite build)",
+      "Bash(ping:*)",
+      "Bash(dir \"e:\\\\【1】单位\\\\【6】软件供应链\\\\AotoBuShu\\\\backend\\\\public\")",
+      "Bash(dir:*)",
+      "Bash(node -e:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(node node_modules/vite/bin/vite.js build:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(npx vite build:*)"
+    ]
+  }
+}

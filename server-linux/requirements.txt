@@ -1,0 +1,35 @@
+# Linux 监控服务端依赖
+
+# Web框架
+flask==3.0.0
+flask-cors==4.0.0
+flask-socketio==5.3.6
+
+# WebSocket
+python-socketio==5.10.0
+eventlet==0.34.2
+
+# SSH连接
+paramiko==3.4.0
+
+# 数据库
+peewee==3.17.0
+
+# 安全
+pyjwt==2.8.0
+bcrypt==4.1.2
+cryptography==41.0.7
+
+# 网络工具
+ping3==4.0.4
+requests==2.31.0
+
+# 系统监控
+psutil==5.9.7
+
+# 配置
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# 调度
+apscheduler==3.10.4
