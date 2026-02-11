@@ -176,6 +176,29 @@ cd backend
 npm run dev
 ```
 
+
+新增文件：ports.json
+
+AI-Service-Monitor/
+└── ports.json          ← 统一端口配置（直接在此修改数字）
+修改端口只需改这一个文件：
+
+字段	默认值	说明
+backend.http	8000	后端 REST API + 静态文件
+backend.websocket	8001	WebSocket 实时推送 / SSH 终端
+frontend_dev.port	5173	Vite 开发服务器（生产不用）
+agent.server_port	8000	Agent 上报目标（应与 backend.http 相同）
+更新：start.sh
+./start.sh 启动时会自动：
+
+读取 ports.json，解析端口值
+写入 backend/.env（覆盖 PORT / WS_PORT）
+更新 frontend/vite.config.ts 的代理目标地址
+端口冲突时，只需编辑 ports.json 改数字，然后重新运行 ./start.sh，无需手动改 .env 或 vite.config.ts。
+
+agent/config.yaml 中的 server_url 端口需手动同步（agent 部署在远端，无法自动推送）。
+
+
 #### 构建生产版本
 
 ```bash
@@ -341,8 +364,8 @@ journalctl -u server-monitor-agent -f
 
 ```bash
 # 服务端口
-PORT=8000
-WS_PORT=8001
+PORT=4000
+WS_PORT=4001
 
 # JWT密钥
 JWT_SECRET=your-secret-key
@@ -362,7 +385,7 @@ METRICS_RETENTION_DAYS=7
 
 ```yaml
 # 监控服务器地址（修改为实际的工作站IP，Windows或Linux均可）
-server_url: "http://192.168.1.10:8000"
+server_url: "http://192.168.1.10:4000"
 
 # Agent ID（留空则自动生成）
 agent_id: ""
