@@ -1,0 +1,20 @@
+{
+  "_readme": "端口统一配置文件 —— 修改此处数值后重新运行 start.sh 即可生效",
+  "_note": "vite.config.ts 中的开发代理目标会由 start.sh 自动同步；agent/config.yaml 中的 server_url 端口需手动同步",
+
+  "backend": {
+    "_comment": "后端 Node.js 服务（含 REST API 和静态文件托管）",
+    "http": 8000,
+    "websocket": 8001
+  },
+
+  "frontend_dev": {
+    "_comment": "前端 Vite 开发服务器（仅开发时使用，生产环境由后端静态文件托管）",
+    "port": 5173
+  },
+
+  "agent": {
+    "_comment": "Python Agent 上报到的服务器端口，应与 backend.http 保持一致",
+    "server_port": 8000
+  }
+}
